@@ -20,13 +20,13 @@ and connect it to your viewController.
 <img src="screen.png">
 
 You have to add this line :
-```
+```swift
 self.automaticallyAdjustsScrollViewInsets = false
 ```
 
 Sample Code:
 
-```
+```swift
 @IBOutlet var m_topBar: SMTabbar!
 self.automaticallyAdjustsScrollViewInsets = false
 
