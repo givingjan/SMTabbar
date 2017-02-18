@@ -19,6 +19,7 @@ class ViewController: UIViewController {
         self.m_topBar.buttonWidth = 90
         self.m_topBar.moveDuration = 0.4
         self.m_topBar.fontSize = 16.0
+        self.m_topBar.linePosition = .top // the color line posistion, default is bottom.
         self.m_topBar.configureSMTabbar(titleList: list) { (index) -> (Void) in
             self.m_text.text = list[index]
             print(index)

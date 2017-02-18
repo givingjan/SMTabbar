@@ -8,6 +8,10 @@
 import UIKit
 
 class SMTabbar: UIScrollView {
+    enum LinePosition  {
+        case bottom
+        case top
+    }
     // MARK: Public Member Variables
     var padding : CGFloat = 0.0
     var extraConstant : CGFloat = 40.0 
@@ -19,10 +23,10 @@ class SMTabbar: UIScrollView {
         }
     }
     
-    var underLineHeight : CGFloat = 4.0 {
+    var lineHeight : CGFloat = 4.0 {
         didSet {
-            if underLineHeight < 1 {
-                underLineHeight = oldValue
+            if lineHeight < 1 {
+                lineHeight = oldValue
             }
         }
     }
@@ -43,13 +47,14 @@ class SMTabbar: UIScrollView {
         }
     }
     
+    var linePosition : LinePosition = .bottom
     var fontColor : UIColor = .black
-    var underLineColor : UIColor = .orange
+    var lineColor : UIColor = .orange
     var buttonBackgroundColor : UIColor = .white
     
     // MARK: Private Member Variables
     private var m_aryTitleList : [String] = []
-    private var m_layerUnderline : CALayer = CALayer()
+    private var m_layerLine : CALayer = CALayer()
     private var m_completionHandler : ((_ index : Int)->(Void))?
     
     // MARK: Life Cycle
@@ -72,7 +77,7 @@ class SMTabbar: UIScrollView {
         self.m_aryTitleList = titleList
         self.initScrollView()
         self.addButtons()
-        self.initUnderLineLayer()
+        self.initLineLayer()
     }
     
     // MARK: Private Methods
@@ -82,16 +87,19 @@ class SMTabbar: UIScrollView {
         self.showsHorizontalScrollIndicator = false
     }
     
-    private func initUnderLineLayer() {
-        self.m_layerUnderline.frame = CGRect(x: padding, y: self.frame.height - self.underLineHeight, width: self.buttonWidth, height: self.underLineHeight)
-        self.m_layerUnderline.backgroundColor = self.underLineColor.cgColor
-        self.m_layerUnderline.contentsScale = UIScreen.main.scale
+    private func initLineLayer() {
+        let y : CGFloat = self.linePosition == .bottom ? self.frame.height - self.lineHeight : 0
+        self.m_layerLine.frame = CGRect(x: padding, y: y, width: self.buttonWidth, height: self.lineHeight)
+        self.m_layerLine.backgroundColor = self.lineColor.cgColor
+        self.m_layerLine.contentsScale = UIScreen.main.scale
         
-        self.layer.addSublayer(self.m_layerUnderline)
+        self.layer.addSublayer(self.m_layerLine)
     }
     
     private func addButtons() {
         var x : CGFloat = 0.0
+        let y : CGFloat = self.linePosition == .bottom ? 0 : self.lineHeight
+
         
         for (index,title) in (self.m_aryTitleList.enumerated()) {
             x = CGFloat(index) * self.buttonWidth
@@ -103,7 +111,7 @@ class SMTabbar: UIScrollView {
             btn.setTitle(title, for: .normal)
             btn.setTitleColor(self.fontColor, for: .normal)
             btn.backgroundColor = self.buttonBackgroundColor
-            btn.frame = CGRect(x: x + (padding * CGFloat(index+1)), y: 0.0, width: self.buttonWidth, height: self.frame.height - self.underLineHeight)
+            btn.frame = CGRect(x: x + (padding * CGFloat(index+1)), y: y, width: self.buttonWidth, height: self.frame.height - self.lineHeight)
             btn.addTarget(self, action: #selector(SMTabbar.handleTap(_:)), for: .touchUpInside)
             
             self.addSubview(btn)
@@ -116,7 +124,7 @@ class SMTabbar: UIScrollView {
     @objc fileprivate func handleTap(_ sender : UIButton) {
         let target_x = sender.frame.origin.x
 
-        self.m_layerUnderline.frame = CGRect(x: target_x, y: self.m_layerUnderline.frame.origin.y, width: self.buttonWidth, height: self.underLineHeight)
+        self.m_layerLine.frame = CGRect(x: target_x, y: self.m_layerLine.frame.origin.y, width: self.buttonWidth, height: self.lineHeight)
         
         if self.contentOffset.x + self.frame.width < target_x + self.buttonWidth {
             let extraMove : CGFloat = sender.tag == self.m_aryTitleList.count - 1 ? 0 : self.extraConstant
