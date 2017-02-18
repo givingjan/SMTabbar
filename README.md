@@ -38,3 +38,9 @@ self.m_topBar.fontSize = 16.0
 self.m_topBar.configureSMTabbar(titleList: list) { (index) -> (Void) in
     print(index)
 }
+
+
+```swift
+// the colorLine of posistion, default is bottom, you can set it to top.
+self.m_topBar.linePosition = .top 
+```
